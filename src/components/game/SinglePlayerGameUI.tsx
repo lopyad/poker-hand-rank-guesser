@@ -66,12 +66,12 @@ const SinglePlayerGameUI: React.FC<SinglePlayerGameUIProps> = ({
               </button>
             ))}
           </div>
-          <button className="actions-button" onClick={onCheckResults}>결과 확인</button>
+          <button className="actions-button game-button" onClick={onCheckResults}>결과 확인</button>
         </div>
       )}
       {gamePhase === 'results' && (
         <div className="actions">
-          <button onClick={onStartNewRound}>새 라운드</button>
+          <button className="game-button" onClick={onStartNewRound}>새 라운드</button>
         </div>
       )}
 
@@ -82,7 +82,6 @@ const SinglePlayerGameUI: React.FC<SinglePlayerGameUIProps> = ({
             player={player}
             prediction={predictions[player.id]} // Pass prediction prop
             predictions={predictions} // Pass predictions map
-            // onPredictionChange={onPredictionChange} // Removed as input is central
             phase={gamePhase}
             result={results?.find(r => r.playerId === player.id)}
             actualRank={results ? results.findIndex(r => r.playerId === player.id) + 1 : undefined}
@@ -98,7 +97,6 @@ interface PlayerSectionProps {
   player: Player;
   prediction: number; // Keep prediction prop for PlayerSection
   predictions: { [playerId: number]: number }; // Added predictions map
-  // onPredictionChange: (playerId: number, rank: number) => void; // Removed
   phase: GamePhase;
   result?: PlayerHandResult;
   actualRank?: number;

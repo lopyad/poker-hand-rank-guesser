@@ -63,5 +63,8 @@ export const HAND_RANK_NAMES: { [key in HandRankValue]: string } = {
 export interface EvaluatedHand {
   rankValue: HandRankValue; // 핸드 족보 값
   rankName: string; // 핸드 족보 이름
-  handCards: Card[]; // 핸드를 구성하는 5장의 카드
+  handCards: Card[]; // 핸드를 구성하는 5장의 카드 (정렬된 상태)
+  primaryTieBreaker?: Rank; // For Pair, Two Pair (higher), Three of a Kind, Four of a Kind, Full House (trips)
+  secondaryTieBreaker?: Rank; // For Two Pair (lower), Full House (pair)
+  kickerRanks: Rank[]; // Ranks of kickers, sorted descending
 }

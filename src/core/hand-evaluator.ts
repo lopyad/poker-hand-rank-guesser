@@ -81,35 +81,110 @@ function evaluate5CardHand(hand: Card[]): EvaluatedHand {
     const counts = Object.values(rankCounts).sort((a, b) => b - a);
     const primaryRank = Object.keys(rankCounts).find(r => rankCounts[r as Rank] === counts[0]) as Rank;
     
+    const kickerRanks = sortedHand.map(card => card.rank);
+
     if (isStraight && isFlush) {
         const flushSuit = Object.keys(suitCounts).find(s => {
             const count = suitCounts[s as Suit];
             return count !== undefined && count >= 5;
         });
         const straightFlushHand = sortedHand.filter(c => c.suit === flushSuit);
-        if (RANK_VALUES[primaryRank] === 14) return { rankValue: HAND_RANK_VALUES.ROYAL_FLUSH, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.ROYAL_FLUSH], handCards: sortedHand };
-        return { rankValue: HAND_RANK_VALUES.STRAIGHT_FLUSH, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.STRAIGHT_FLUSH], handCards: sortedHand };
+        if (RANK_VALUES[primaryRank] === 14) return { rankValue: HAND_RANK_VALUES.ROYAL_FLUSH, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.ROYAL_FLUSH], handCards: sortedHand, kickerRanks };
+        return { rankValue: HAND_RANK_VALUES.STRAIGHT_FLUSH, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.STRAIGHT_FLUSH], handCards: sortedHand, kickerRanks };
     }
-    if (counts[0] === 4) return { rankValue: HAND_RANK_VALUES.FOUR_OF_A_KIND, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.FOUR_OF_A_KIND], handCards: sortedHand };
-    if (counts[0] === 3 && counts[1] === 2) return { rankValue: HAND_RANK_VALUES.FULL_HOUSE, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.FULL_HOUSE], handCards: sortedHand };
-    if (isFlush) return { rankValue: HAND_RANK_VALUES.FLUSH, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.FLUSH], handCards: sortedHand };
-    if (isStraight) return { rankValue: HAND_RANK_VALUES.STRAIGHT, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.STRAIGHT], handCards: sortedHand };
-    if (counts[0] === 3) return { rankValue: HAND_RANK_VALUES.THREE_OF_A_KIND, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.THREE_OF_A_KIND], handCards: sortedHand };
-    if (counts[0] === 2 && counts[1] === 2) return { rankValue: HAND_RANK_VALUES.TWO_PAIR, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.TWO_PAIR], handCards: sortedHand };
-    if (counts[0] === 2) return { rankValue: HAND_RANK_VALUES.PAIR, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.PAIR], handCards: sortedHand };
+    if (counts[0] === 4) return { rankValue: HAND_RANK_VALUES.FOUR_OF_A_KIND, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.FOUR_OF_A_KIND], handCards: sortedHand, primaryTieBreaker: primaryRank, kickerRanks: kickerRanks.filter(r => r !== primaryRank) };
+    if (counts[0] === 3 && counts[1] === 2) {
+        const tripsRank = Object.keys(rankCounts).find(r => rankCounts[r as Rank] === 3) as Rank;
+        const pairRank = Object.keys(rankCounts).find(r => rankCounts[r as Rank] === 2) as Rank;
+        return { rankValue: HAND_RANK_VALUES.FULL_HOUSE, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.FULL_HOUSE], handCards: sortedHand, primaryTieBreaker: tripsRank, secondaryTieBreaker: pairRank, kickerRanks: [] };
+    }
+    if (isFlush) return { rankValue: HAND_RANK_VALUES.FLUSH, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.FLUSH], handCards: sortedHand, kickerRanks };
+    if (isStraight) return { rankValue: HAND_RANK_VALUES.STRAIGHT, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.STRAIGHT], handCards: sortedHand, kickerRanks };
+    if (counts[0] === 3) return { rankValue: HAND_RANK_VALUES.THREE_OF_A_KIND, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.THREE_OF_A_KIND], handCards: sortedHand, primaryTieBreaker: primaryRank, kickerRanks: kickerRanks.filter(r => r !== primaryRank) };
+    if (counts[0] === 2 && counts[1] === 2) {
+        const pairRanks = Object.keys(rankCounts).filter(r => rankCounts[r as Rank] === 2).sort((a, b) => RANK_VALUES[b as Rank] - RANK_VALUES[a as Rank]) as Rank[];
+        const highPair = pairRanks[0];
+        const lowPair = pairRanks[1];
+        const kicker = Object.keys(rankCounts).find(r => rankCounts[r as Rank] === 1) as Rank;
+        return { rankValue: HAND_RANK_VALUES.TWO_PAIR, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.TWO_PAIR], handCards: sortedHand, primaryTieBreaker: highPair, secondaryTieBreaker: lowPair, kickerRanks: [kicker] };
+    }
+    if (counts[0] === 2) return { rankValue: HAND_RANK_VALUES.PAIR, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.PAIR], handCards: sortedHand, primaryTieBreaker: primaryRank, kickerRanks: kickerRanks.filter(r => r !== primaryRank) };
 
-    return { rankValue: HAND_RANK_VALUES.HIGH_CARD, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.HIGH_CARD], handCards: sortedHand };
+    return { rankValue: HAND_RANK_VALUES.HIGH_CARD, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.HIGH_CARD], handCards: sortedHand, kickerRanks };
 }
 
 export function compareEvaluatedHands(a: EvaluatedHand, b: EvaluatedHand): number {
     if (a.rankValue !== b.rankValue) {
         return a.rankValue - b.rankValue;
     }
-    for (let i = 0; i < a.handCards.length; i++) {
-        const diff = RANK_VALUES[a.handCards[i].rank] - RANK_VALUES[b.handCards[i].rank];
-        if (diff !== 0) {
-            return diff;
-        }
+
+    // If hand ranks are equal, apply hand-specific tie-breaking rules
+    switch (a.rankValue) {
+        case HAND_RANK_VALUES.ROYAL_FLUSH:
+        case HAND_RANK_VALUES.STRAIGHT_FLUSH:
+        case HAND_RANK_VALUES.STRAIGHT:
+        case HAND_RANK_VALUES.FLUSH:
+        case HAND_RANK_VALUES.HIGH_CARD:
+            // For these hands, compare kickers (all 5 cards) in order
+            for (let i = 0; i < a.kickerRanks.length; i++) {
+                const diff = RANK_VALUES[a.kickerRanks[i]] - RANK_VALUES[b.kickerRanks[i]];
+                if (diff !== 0) {
+                    return diff;
+                }
+            }
+            break;
+        case HAND_RANK_VALUES.FOUR_OF_A_KIND:
+            // Compare the rank of the four-of-a-kind first
+            let diff = RANK_VALUES[a.primaryTieBreaker!] - RANK_VALUES[b.primaryTieBreaker!];
+            if (diff !== 0) return diff;
+            // Then compare the kicker
+            diff = RANK_VALUES[a.kickerRanks[0]] - RANK_VALUES[b.kickerRanks[0]];
+            if (diff !== 0) return diff;
+            break;
+        case HAND_RANK_VALUES.FULL_HOUSE:
+            // Compare the rank of the three-of-a-kind first
+            let diffTrips = RANK_VALUES[a.primaryTieBreaker!] - RANK_VALUES[b.primaryTieBreaker!];
+            if (diffTrips !== 0) return diffTrips;
+            // Then compare the rank of the pair
+            let diffPair = RANK_VALUES[a.secondaryTieBreaker!] - RANK_VALUES[b.secondaryTieBreaker!];
+            if (diffPair !== 0) return diffPair;
+            break;
+        case HAND_RANK_VALUES.THREE_OF_A_KIND:
+            // Compare the rank of the three-of-a-kind first
+            let diffTripsOnly = RANK_VALUES[a.primaryTieBreaker!] - RANK_VALUES[b.primaryTieBreaker!];
+            if (diffTripsOnly !== 0) return diffTripsOnly;
+            // Then compare kickers
+            for (let i = 0; i < a.kickerRanks.length; i++) {
+                const diffKicker = RANK_VALUES[a.kickerRanks[i]] - RANK_VALUES[b.kickerRanks[i]];
+                if (diffKicker !== 0) {
+                    return diffKicker;
+                }
+            }
+            break;
+        case HAND_RANK_VALUES.TWO_PAIR:
+            // Compare the higher pair first
+            let diffHighPair = RANK_VALUES[a.primaryTieBreaker!] - RANK_VALUES[b.primaryTieBreaker!];
+            if (diffHighPair !== 0) return diffHighPair;
+            // Then compare the lower pair
+            let diffLowPair = RANK_VALUES[a.secondaryTieBreaker!] - RANK_VALUES[b.secondaryTieBreaker!];
+            if (diffLowPair !== 0) return diffLowPair;
+            // Then compare the kicker
+            let diffTwoPairKicker = RANK_VALUES[a.kickerRanks[0]] - RANK_VALUES[b.kickerRanks[0]];
+            if (diffTwoPairKicker !== 0) return diffTwoPairKicker;
+            break;
+        case HAND_RANK_VALUES.PAIR:
+            // Compare the pair first
+            let diffPairOnly = RANK_VALUES[a.primaryTieBreaker!] - RANK_VALUES[b.primaryTieBreaker!];
+            if (diffPairOnly !== 0) return diffPairOnly;
+            // Then compare kickers
+            for (let i = 0; i < a.kickerRanks.length; i++) {
+                const diffKickerPair = RANK_VALUES[a.kickerRanks[i]] - RANK_VALUES[b.kickerRanks[i]];
+                if (diffKickerPair !== 0) {
+                    return diffKickerPair;
+                }
+            }
+            break;
     }
+
     return 0;
 }

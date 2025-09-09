@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { GameState, Player, EvaluatedHand } from '../core/types';
 import { setupNewGame, getPlayerHandRanks, type PlayerHandResult } from '../core/game';
-import '../App.css';
+import './Game.css'; // Changed import
 import { useGameMode } from '../context/GameModeContext'; // Import the hook
 
 // Import game mode specific UI components
@@ -131,10 +131,10 @@ function Game() {
   return (
     <div className="app">
       <header>
-        <h1>포커 핸드 순위 맞추기</h1>
+        <h1>poker-hand-rank-guesser</h1>
         <div className="scores">
           {Object.keys(scores).map(playerId => (
-            <span key={playerId}>P{playerId}: {scores[Number(playerId)]}점 </span>
+            <span key={playerId}>{playerId}: {scores[Number(playerId)]}점 </span>
           ))}
         </div>
       </header>

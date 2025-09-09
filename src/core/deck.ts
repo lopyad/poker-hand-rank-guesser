@@ -20,3 +20,11 @@ export function shuffleDeck(deck: Card[]): Card[] {
   }
   return shuffled;
 }
+
+// 덱에서 카드 n장 분배
+export function dealCards(deck: Card[], numCards: number): Card[] {
+  if (deck.length < numCards) {
+    throw new Error("Not enough cards in the deck to deal.");
+  }
+  return deck.splice(0, numCards);
+}

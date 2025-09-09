@@ -56,7 +56,7 @@ function evaluate5CardHand(hand: Card[]): EvaluatedHand {
         suitCounts[card.suit] = (suitCounts[card.suit] || 0) + 1;
     }
 
-    if (Object.values(suitCounts).some(count => count >= 5)) {
+    if (Object.values(suitCounts).some(count => count !== undefined && count >= 5)) {
         isFlush = true;
     }
 
@@ -82,7 +82,11 @@ function evaluate5CardHand(hand: Card[]): EvaluatedHand {
     const primaryRank = Object.keys(rankCounts).find(r => rankCounts[r as Rank] === counts[0]) as Rank;
     
     if (isStraight && isFlush) {
-        const straightFlushHand = sortedHand.filter(c => c.suit === Object.keys(suitCounts).find(s => suitCounts[s as Suit] >= 5));
+        const flushSuit = Object.keys(suitCounts).find(s => {
+            const count = suitCounts[s as Suit];
+            return count !== undefined && count >= 5;
+        });
+        const straightFlushHand = sortedHand.filter(c => c.suit === flushSuit);
         if (RANK_VALUES[primaryRank] === 14) return { rankValue: HAND_RANK_VALUES.ROYAL_FLUSH, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.ROYAL_FLUSH], handCards: sortedHand };
         return { rankValue: HAND_RANK_VALUES.STRAIGHT_FLUSH, rankName: HAND_RANK_NAMES[HAND_RANK_VALUES.STRAIGHT_FLUSH], handCards: sortedHand };
     }

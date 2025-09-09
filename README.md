@@ -1,3 +1,4 @@
+gemini를 이용해서 작성했습니다.
 # poker-hand-rank-guesser
 
 이 프로젝트는 사용자가 포커 핸드의 순위를 맞추는 웹 기반 게임입니다.

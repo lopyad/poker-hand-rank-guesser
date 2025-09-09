@@ -1,7 +1,8 @@
 .app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Take full viewport height */
+  min-height: 100vh;
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   background: white;
@@ -20,7 +21,7 @@ header {
 header h1 {
   margin: 0;
   font-size: 1.5em; /* Smaller title */
-  color: #1877f2;
+  color: #000000;
 }
 
 .scores {
@@ -44,6 +45,11 @@ main {
 .community-cards-area {
   margin-bottom: 40px; /* Increased margin for spacing */
   text-align: center;
+  flex: 1; /* Make it take up available space */
+  display: flex; /* Make it a flex container */
+  flex-direction: column; /* Stack children vertically */
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content horizontally */
 }
 
 .community-cards-area h2 {
@@ -53,8 +59,8 @@ main {
 }
 
 .community-cards-area .card-list .card-component {
-  transform: scale(1.5); /* Make community cards larger */
-  margin: 0 10px; /* Adjust spacing */
+  transform: scale(2.0); /* Make community cards larger */
+  margin: 0 40px; /* Increased margin for spacing */
 }
 
 .players-area {
@@ -63,7 +69,7 @@ main {
   align-items: flex-end; /* Align players to the bottom */
   flex-wrap: wrap; /* Allow wrapping on smaller screens */
   margin-top: auto; /* Push players-area to the bottom */
-  padding-top: 20px; /* Add some padding from community cards */
+  /* padding-top: 20px;  */
   width: 100%; /* Ensure it takes full width */
   max-width: 1200px; /* Allow full width */
 }
@@ -72,6 +78,7 @@ main {
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 10px;
+  padding-top: 5px;
   text-align: center;
   background-color: #fafafa;
   transition: all 0.3s ease;
@@ -82,6 +89,18 @@ main {
   display: flex; /* Make player a flex container */
   flex-direction: column; /* Stack children vertically */
   align-items: center; /* Center children horizontally */
+}
+
+.player h3 {
+  margin-top: 5px;
+  margin-bottom: 5px; /* Reduced bottom margin for h3 */
+}
+
+.player-score {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px; /* Space below score */
 }
 
 .player.correct {
@@ -167,7 +186,7 @@ main {
   align-items: center;
   justify-content: center;
   gap: 20px; /* Space between buttons and actions */
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* Reduced margin for closer placement */
 }
 
 .prediction-buttons {

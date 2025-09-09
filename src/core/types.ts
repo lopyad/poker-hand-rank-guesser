@@ -47,16 +47,16 @@ export type HandRankValue = typeof HAND_RANK_VALUES[keyof typeof HAND_RANK_VALUE
 
 // 핸드 족보 이름
 export const HAND_RANK_NAMES: { [key in HandRankValue]: string } = {
-  [HAND_RANK_VALUES.HIGH_CARD]: '하이 카드',
-  [HAND_RANK_VALUES.PAIR]: '원 페어',
-  [HAND_RANK_VALUES.TWO_PAIR]: '투 페어',
-  [HAND_RANK_VALUES.THREE_OF_A_KIND]: '쓰리 오브 어 카인드',
-  [HAND_RANK_VALUES.STRAIGHT]: '스트레이트',
-  [HAND_RANK_VALUES.FLUSH]: '플러쉬',
-  [HAND_RANK_VALUES.FULL_HOUSE]: '풀 하우스',
-  [HAND_RANK_VALUES.FOUR_OF_A_KIND]: '포 오브 어 카인드',
-  [HAND_RANK_VALUES.STRAIGHT_FLUSH]: '스트레이트 플러쉬',
-  [HAND_RANK_VALUES.ROYAL_FLUSH]: '로열 스트레이트 플러쉬',
+  [HAND_RANK_VALUES.HIGH_CARD]: 'High Card',
+  [HAND_RANK_VALUES.PAIR]: 'Pair',
+  [HAND_RANK_VALUES.TWO_PAIR]: 'Two Pair',
+  [HAND_RANK_VALUES.THREE_OF_A_KIND]: 'Three of a Kind',
+  [HAND_RANK_VALUES.STRAIGHT]: 'Straight',
+  [HAND_RANK_VALUES.FLUSH]: 'Flush',
+  [HAND_RANK_VALUES.FULL_HOUSE]: 'Full House',
+  [HAND_RANK_VALUES.FOUR_OF_A_KIND]: 'Four of a Kind',
+  [HAND_RANK_VALUES.STRAIGHT_FLUSH]: 'Straight Flush',
+  [HAND_RANK_VALUES.ROYAL_FLUSH]: 'Royal Flush',
 };
 
 // 핸드 평가 결과

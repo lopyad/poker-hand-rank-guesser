@@ -63,17 +63,25 @@ function Game() {
     }
 
     if (Object.keys(currentPredictions).length !== gameState?.players.length) {
-      alert('모든 플레이어의 순위를 예측해야 합니다.');
+      alert('All players must make a prediction.'); // Changed text
       return;
     }
     const finalResults = getPlayerHandRanks(gameState!);
-    setResults(finalResults);
+    
+    // Populate predictedRank and actualRank in the results array
+    const updatedResults = finalResults.map((result, index) => ({
+      ...result,
+      predictedRank: currentPredictions[result.playerId],
+      actualRank: index + 1,
+    }));
+
+    setResults(updatedResults);
+    console.log("Game.tsx - results after setResults:", updatedResults); // Added log
 
     // 점수 계산
     const newScores = { ...scores };
-    finalResults.forEach((result, index) => {
-      const actualRank = index + 1;
-      if (currentPredictions[result.playerId] === actualRank) {
+    updatedResults.forEach((result) => {
+      if (result.predictedRank === result.actualRank) {
         newScores[result.playerId] += 1;
       }
     });
@@ -85,6 +93,8 @@ function Game() {
   if (!gameState) {
     return <div>Loading...</div>;
   }
+
+  console.log("Game.tsx - results before render:", results); // Added log
 
   const renderGameUI = () => {
     switch (gameMode) {
@@ -131,12 +141,7 @@ function Game() {
   return (
     <div className="app">
       <header>
-        <h1>poker-hand-rank-guesser</h1>
-        <div className="scores">
-          {Object.keys(scores).map(playerId => (
-            <span key={playerId}>{playerId}: {scores[Number(playerId)]}점 </span>
-          ))}
-        </div>
+        <h1>Poker Hand Rank Guesser</h1> {/* Changed text */}
       </header>
       {renderGameUI()}
     </div>

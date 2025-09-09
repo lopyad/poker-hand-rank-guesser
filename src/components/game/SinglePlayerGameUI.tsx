@@ -46,7 +46,7 @@ const SinglePlayerGameUI: React.FC<SinglePlayerGameUIProps> = ({
   return (
     <main>
       <div className="community-cards-area">
-        <h2>커뮤니티 카드</h2>
+        {/* <h2>Community Cards</h2>  */}
         <div className="card-list">
           {gameState.communityCards.map((card, index) => <Card key={index} card={card} />)}
         </div>
@@ -55,39 +55,49 @@ const SinglePlayerGameUI: React.FC<SinglePlayerGameUIProps> = ({
       {gamePhase === 'predicting' && (
         <div className="prediction-controls">
           <div className="prediction-buttons">
-            <span>예상 등수: </span>
+            <span>Predicted Rank: </span> {/* Changed text */}
             {[1, 2, 3, 4].map(rank => (
               <button
                 key={rank}
                 className={`prediction-button ${humanPrediction === rank ? 'selected' : ''}`}
                 onClick={() => handleHumanPredictionChange(rank)}
               >
-                {rank}등
+                {rank}th
               </button>
             ))}
           </div>
-          <button className="actions-button game-button" onClick={onCheckResults}>결과 확인</button>
+          <button className="actions-button game-button" onClick={onCheckResults}>Check Results</button> {/* Changed text */}
         </div>
       )}
       {gamePhase === 'results' && (
         <div className="actions">
-          <button className="game-button" onClick={onStartNewRound}>새 라운드</button>
+          <button className="game-button" onClick={onStartNewRound}>New Round</button> {/* Changed text */}
         </div>
       )}
 
       <div className="players-area">
-        {gameState.players.map(player => (
-          <PlayerSection
-            key={player.id}
-            player={player}
-            prediction={predictions[player.id]} // Pass prediction prop
-            predictions={predictions} // Pass predictions map
-            phase={gamePhase}
-            result={results?.find(r => r.playerId === player.id)}
-            actualRank={results ? results.findIndex(r => r.playerId === player.id) + 1 : undefined}
-            isAI={player.id !== 1} // Pass isAI prop
-          />
-        ))}
+        {gameState.players.map(player => {
+          const playerResult = results?.find(r => r.playerId === player.id);
+          const isCorrect = playerResult && predictions[player.id] === playerResult.actualRank;
+
+          return (
+            <React.Fragment key={player.id}>
+              {/* {gamePhase === 'results' && isCorrect && (
+                <p className="correct-text">Correct!</p>
+              )} */}
+              <PlayerSection
+                player={player}
+                prediction={predictions[player.id]} // Pass prediction prop
+                predictions={predictions} // Pass predictions map
+                phase={gamePhase}
+                result={playerResult}
+                actualRank={playerResult ? playerResult.actualRank : undefined}
+                isAI={player.id !== 1} // Pass isAI prop
+                scores={scores} // Pass scores prop
+              />
+            </React.Fragment>
+          );
+        })}
       </div>
     </main>
   );
@@ -101,14 +111,16 @@ interface PlayerSectionProps {
   result?: PlayerHandResult;
   actualRank?: number;
   isAI?: boolean; // Added isAI prop
+  scores: { [playerId: number]: number }; // Added scores prop
 }
 
-const PlayerSection: React.FC<PlayerSectionProps> = ({ player, prediction, predictions, phase, result, actualRank, isAI }) => {
+const PlayerSection: React.FC<PlayerSectionProps> = ({ player, prediction, predictions, phase, result, actualRank, isAI, scores }) => {
   const isCorrect = actualRank !== undefined && prediction === actualRank; // Check correctness using passed prediction
 
   return (
-    <div className={`player ${phase === 'results' && (isCorrect ? 'correct' : 'incorrect')}`}>
-      <h3>플레이어 {player.id} {isAI ? '(AI)' : ''}</h3>
+    <div className={`player ${phase === 'results' && (actualRank !== undefined && prediction === actualRank ? 'correct' : 'incorrect')}`}>
+      <h3>Player {player.id} {isAI ? '(AI)' : ''}</h3>
+      <div className="player-score">{scores[player.id]} pts</div> {/* Added class */}
       <div className="card-list">
         {isAI && phase === 'predicting' ? (
           // Display face-down cards for AI during predicting phase
@@ -126,8 +138,8 @@ const PlayerSection: React.FC<PlayerSectionProps> = ({ player, prediction, predi
       {phase === 'results' ? (
         <div className="result-display">
           <p><strong>{result?.evaluatedHand.rankName}</strong></p>
-          <p>예측: {predictions[player.id] || '-'}등 / 결과: <strong>{actualRank}등</strong></p>
-          {isCorrect ? <p className="correct-text">정답!</p> : null}
+          <p>Prediction: {predictions[player.id] || '-'}th / Result: <strong>{actualRank}th</strong></p> {/* Changed text */}
+          {/* isCorrect text moved to parent */}
         </div>
       ) : null}
     </div>

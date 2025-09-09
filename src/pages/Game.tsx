@@ -3,10 +3,14 @@ import type { GameState, Player, EvaluatedHand } from '../core/types';
 import { setupNewGame, getPlayerHandRanks, type PlayerHandResult } from '../core/game';
 import Card from '../components/Card';
 import '../App.css';
+import { useGameMode } from '../context/GameModeContext'; // Import the hook
 
 type GamePhase = 'predicting' | 'results';
 
 function Game() {
+  const { gameMode } = useGameMode(); // Get gameMode from context
+  console.log("Current Game Mode:", gameMode); // Log for verification
+
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [gamePhase, setGamePhase] = useState<GamePhase>('predicting');
   const [predictions, setPredictions] = useState<{ [playerId: number]: number }>({});
@@ -21,8 +25,21 @@ function Game() {
   };
 
   useEffect(() => {
+    // You can use gameMode here to initialize game state differently
+    // For example:
+    if (gameMode === 'single') {
+      console.log("Starting single player game...");
+      // setupNewGame() might need to be modified to accept game mode
+      // or you might have different setup functions for different modes
+    } else if (gameMode === 'multiplayer') {
+      console.log("Starting online multiplayer game...");
+      // Logic for online multiplayer setup
+    } else if (gameMode === 'local-multiplayer') {
+      console.log("Starting local multiplayer game...");
+      // Logic for local multiplayer setup
+    }
     startNewRound();
-  }, []);
+  }, [gameMode]); // Add gameMode to dependency array if you want to react to mode changes
 
   const handlePredictionChange = (playerId: number, rank: number) => {
     setPredictions(prev => ({ ...prev, [playerId]: rank }));
@@ -70,8 +87,14 @@ function Game() {
             {gameState.communityCards.map((card, index) => <Card key={index} card={card} />)}
           </div>
         </div>
+        <div className="actions">
+          {gamePhase === 'predicting' ? (
+            <button onClick={handleCheckResults}>결과 확인</button>
+          ) : (
+            <button onClick={startNewRound}>새 라운드</button>
+          )}
+        </div>
         <div className="players-area">
-          <h2>플레이어</h2>
           {gameState.players.map(player => (
             <PlayerSection
               key={player.id}
@@ -83,13 +106,6 @@ function Game() {
               actualRank={results ? results.findIndex(r => r.playerId === player.id) + 1 : undefined}
             />
           ))}
-        </div>
-        <div className="actions">
-          {gamePhase === 'predicting' ? (
-            <button onClick={handleCheckResults}>결과 확인</button>
-          ) : (
-            <button onClick={startNewRound}>새 라운드</button>
-          )}
         </div>
       </main>
     </div>

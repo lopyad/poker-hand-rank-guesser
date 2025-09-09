@@ -3,68 +3,93 @@ body {
   background-color: #f0f2f5;
   color: #333;
   margin: 0;
-  padding: 20px;
+  padding: 0; /* Remove body padding as .app will handle it */
 }
 
 .app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Take full viewport height */
   max-width: 1200px;
   margin: 0 auto;
   background: white;
   border-radius: 8px;
   padding: 20px;
+  box-sizing: border-box; /* Include padding in element's total width and height */
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 header {
   text-align: center;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 20px;
-  margin-bottom: 20px;
+  padding-bottom: 10px; /* Reduced padding */
+  margin-bottom: 10px; /* Reduced margin */
 }
 
 header h1 {
   margin: 0;
+  font-size: 1.8em; /* Smaller title */
+  color: #1877f2;
 }
 
 .scores {
-  margin-top: 10px;
-  font-size: 1.1em;
+  margin-top: 5px; /* Reduced margin */
+  font-size: 1em;
   color: #555;
 }
 
 .scores span {
-  margin: 0 10px;
+  margin: 0 8px;
 }
 
-.community-cards-area, .players-area {
-  margin-bottom: 20px;
-}
-
-h2 {
-  text-align: center;
-  color: #1877f2;
-}
-
-.card-list {
+main {
+  flex: 1; /* Main content takes available space */
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-bottom: 10px;
+  flex-direction: column;
+  justify-content: center; /* Center community cards vertically */
+  align-items: center; /* Center community cards horizontally */
+}
+
+.community-cards-area {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.community-cards-area h2 {
+  font-size: 1.5em;
+  color: #1877f2;
+  margin-bottom: 15px;
+}
+
+.community-cards-area .card-list .card-component {
+  transform: scale(1.5); /* Make community cards larger */
+  margin: 0 10px; /* Adjust spacing */
 }
 
 .players-area {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+  display: flex; /* Revert to flex for horizontal arrangement */
+  justify-content: space-around; /* Evenly space players horizontally */
+  align-items: flex-end; /* Align players to the bottom */
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  margin-top: auto; /* Push players-area to the bottom */
+  padding-top: 20px; /* Add some padding from community cards */
+  width: 100%; /* Ensure it takes full width */
+  max-width: 1200px; /* Allow full width */
 }
 
 .player {
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 15px;
+  padding: 10px;
   text-align: center;
   background-color: #fafafa;
   transition: all 0.3s ease;
+  flex: 1; /* Allow players to grow and shrink */
+  min-width: 180px; /* Minimum width for player card */
+  max-width: 22%; /* Max width to allow 4 players in a row */
+  margin: 10px; /* Spacing between players */
+  display: flex; /* Make player a flex container */
+  flex-direction: column; /* Stack children vertically */
+  align-items: center; /* Center children horizontally */
 }
 
 .player.correct {
@@ -94,6 +119,8 @@ h2 {
 .actions {
   text-align: center;
   margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
 }
 
 .actions button {
@@ -109,4 +136,46 @@ h2 {
 
 .actions button:hover {
   background-color: #166fe5;
+}
+
+/* Specific styling for card-list within player section for 2x2 grid */
+.player .card-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 columns */
+  gap: 5px; /* Small gap between cards */
+  place-items: center; /* Center cards within their grid cells (both axes) */
+  margin-bottom: 10px; /* Keep some margin below the cards */
+  width: 155px; /* Calculated width for 2x2 cards */
+  height: 215px; /* Calculated height for 2x2 cards */
+}
+
+/* Responsive adjustments for smartphone */
+@media (max-width: 768px) {
+  .app {
+    padding: 10px;
+  }
+
+  header h1 {
+    font-size: 1.5em;
+  }
+
+  .community-cards-area .card-list .card-component {
+    transform: scale(1.2); /* Slightly smaller on mobile */
+  }
+
+  .players-area {
+    flex-direction: column; /* Stack players vertically */
+    align-items: center; /* Center players horizontally */
+    margin-top: 20px; /* Adjust margin */
+  }
+
+  .player {
+    max-width: 90%; /* Allow players to take more width */
+    margin: 10px 0; /* Vertical spacing */
+  }
+
+  .actions button {
+    font-size: 1em;
+    padding: 10px 20px;
+  }
 }

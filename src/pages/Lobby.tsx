@@ -19,7 +19,7 @@ const Lobby: React.FC = () => {
   }, []);
 
   const handleStartGame = () => {
-    navigate('/game');
+    navigate('/setup');
   };
 
   return (

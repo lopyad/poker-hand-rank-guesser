@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
 import type { GameState, Player, EvaluatedHand } from '../core/types';
 import { setupNewGame, getPlayerHandRanks, type PlayerHandResult } from '../core/game';
-import Card from '../components/Card';
 import '../App.css';
 import { useGameMode } from '../context/GameModeContext'; // Import the hook
+
+// Import game mode specific UI components
+import SinglePlayerGameUI from '../components/game/SinglePlayerGameUI';
+import MultiplayerGameUI from '../components/game/MultiplayerGameUI';
+import LocalMultiplayerGameUI from '../components/game/LocalMultiplayerGameUI';
 
 type GamePhase = 'predicting' | 'results';
 
@@ -46,7 +50,19 @@ function Game() {
   };
 
   const handleCheckResults = () => {
-    if (Object.keys(predictions).length !== gameState?.players.length) {
+    let currentPredictions = { ...predictions };
+
+    if (gameMode === 'single') {
+      // Generate random predictions for AI players (2, 3, 4)
+      gameState?.players.forEach(player => {
+        if (player.id !== 1 && !(player.id in currentPredictions)) {
+          currentPredictions[player.id] = Math.floor(Math.random() * 4) + 1; // Random rank from 1 to 4
+        }
+      });
+      setPredictions(currentPredictions);
+    }
+
+    if (Object.keys(currentPredictions).length !== gameState?.players.length) {
       alert('모든 플레이어의 순위를 예측해야 합니다.');
       return;
     }
@@ -57,7 +73,7 @@ function Game() {
     const newScores = { ...scores };
     finalResults.forEach((result, index) => {
       const actualRank = index + 1;
-      if (predictions[result.playerId] === actualRank) {
+      if (currentPredictions[result.playerId] === actualRank) {
         newScores[result.playerId] += 1;
       }
     });
@@ -70,6 +86,48 @@ function Game() {
     return <div>Loading...</div>;
   }
 
+  const renderGameUI = () => {
+    switch (gameMode) {
+      case 'single':
+        return (
+          <SinglePlayerGameUI
+            gameState={gameState}
+            gamePhase={gamePhase}
+            predictions={predictions}
+            onPredictionChange={handlePredictionChange}
+            onCheckResults={handleCheckResults}
+            onStartNewRound={startNewRound}
+            scores={scores}
+            results={results} // Pass results prop
+          />
+        );
+      case 'multiplayer':
+        return <MultiplayerGameUI />;
+      case 'local-multiplayer':
+        return <LocalMultiplayerGameUI
+            gameState={gameState}
+            gamePhase={gamePhase}
+            predictions={predictions}
+            onPredictionChange={handlePredictionChange}
+            onCheckResults={handleCheckResults}
+            onStartNewRound={startNewRound}
+            scores={scores}
+            results={results} // Pass results prop
+          />
+      default:
+        return <SinglePlayerGameUI
+                  gameState={gameState}
+                  gamePhase={gamePhase}
+                  predictions={predictions}
+                  onPredictionChange={handlePredictionChange}
+                  onCheckResults={handleCheckResults}
+                  onStartNewRound={startNewRound}
+                  scores={scores}
+                  results={results} // Pass results prop
+                />; // Default to single player
+    }
+  };
+
   return (
     <div className="app">
       <header>
@@ -80,81 +138,9 @@ function Game() {
           ))}
         </div>
       </header>
-      <main>
-        <div className="community-cards-area">
-          <h2>커뮤니티 카드</h2>
-          <div className="card-list">
-            {gameState.communityCards.map((card, index) => <Card key={index} card={card} />)}
-          </div>
-        </div>
-        <div className="actions">
-          {gamePhase === 'predicting' ? (
-            <button onClick={handleCheckResults}>결과 확인</button>
-          ) : (
-            <button onClick={startNewRound}>새 라운드</button>
-          )}
-        </div>
-        <div className="players-area">
-          {gameState.players.map(player => (
-            <PlayerSection
-              key={player.id}
-              player={player}
-              prediction={predictions[player.id]}
-              onPredictionChange={handlePredictionChange}
-              phase={gamePhase}
-              result={results?.find(r => r.playerId === player.id)}
-              actualRank={results ? results.findIndex(r => r.playerId === player.id) + 1 : undefined}
-            />
-          ))}
-        </div>
-      </main>
+      {renderGameUI()}
     </div>
   );
 }
-
-interface PlayerSectionProps {
-  player: Player;
-  prediction: number;
-  onPredictionChange: (playerId: number, rank: number) => void;
-  phase: GamePhase;
-  result?: PlayerHandResult;
-  actualRank?: number;
-}
-
-const PlayerSection: React.FC<PlayerSectionProps> = ({ player, prediction, onPredictionChange, phase, result, actualRank }) => {
-  const isCorrect = prediction === actualRank;
-
-  return (
-    <div className={`player ${phase === 'results' && (isCorrect ? 'correct' : 'incorrect')}`}>
-      <h3>플레이어 {player.id}</h3>
-      <div className="card-list">
-        {player.holeCards.map((card, index) => <Card key={index} card={card} />)}
-      </div>
-      {phase === 'predicting' ? (
-        <div className="prediction-input">
-          <span>예상 등수: </span>
-          {[1, 2, 3, 4].map(rank => (
-            <label key={rank}>
-              <input
-                type="radio"
-                name={`player-${player.id}-rank`}
-                value={rank}
-                checked={prediction === rank}
-                onChange={() => onPredictionChange(player.id, rank)}
-              />
-              {rank}등
-            </label>
-          ))}
-        </div>
-      ) : (
-        <div className="result-display">
-          <p><strong>{result?.evaluatedHand.rankName}</strong></p>
-          <p>예측: {prediction}등 / 결과: <strong>{actualRank}등</strong></p>
-          {isCorrect ? <p className="correct-text">정답!</p> : null}
-        </div>
-      )}
-    </div>
-  );
-};
 
 export default Game;

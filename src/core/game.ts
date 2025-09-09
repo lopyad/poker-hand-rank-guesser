@@ -24,6 +24,8 @@ export function setupNewGame(): GameState {
 export interface PlayerHandResult {
   playerId: number;
   evaluatedHand: EvaluatedHand;
+  predictedRank?: number;
+  actualRank?: number;
 }
 
 // 모든 플레이어의 핸드를 평가하고 순위를 매겨 반환

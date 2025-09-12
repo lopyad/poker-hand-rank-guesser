@@ -25,7 +25,8 @@ const Login: React.FC = () => {
     console.log("Generating new random cards for login screen...");
     const deck = createDeck();
     const shuffledDeck = shuffleDeck(deck);
-    const dealtCards = dealCards(shuffledDeck, 5);
+    // const dealtCards = dealCards(shuffledDeck, 5);
+    const dealtCards = dealCards(shuffledDeck, 1);
     setRandomCards(dealtCards);
   }, []);
 
@@ -50,7 +51,7 @@ const Login: React.FC = () => {
     <GoogleOAuthProvider clientId={googleClientId}>
       <div className="login-container">
         <h1 className="game-title">account</h1>
-        <div className="card-display">
+        <div className="card-display-1">
           {randomCards.map((card, index) => (
             <Card key={index} card={card} />
           ))}

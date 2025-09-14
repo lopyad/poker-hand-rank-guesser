@@ -1,4 +1,4 @@
-import type { Player, GameState, Card, EvaluatedHand } from './types';
+import type { Player, GameState, Card, EvaluatedHand } from '../types/types';
 import { createDeck, shuffleDeck } from './deck';
 import { evaluatePlayerHand, compareEvaluatedHands } from './hand-evaluator';
 

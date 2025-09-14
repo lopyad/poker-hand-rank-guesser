@@ -4,6 +4,7 @@ import Lobby from './pages/Lobby';
 import Game from './pages/Game';
 import GameSetup from './pages/GameSetup';
 import Login from './pages/Login';
+import MultiGame from './pages/MultiGame'; // Import MultiGame
 import { useAuthStore } from './store/authStore';
 import './App.css';
 
@@ -21,6 +22,7 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/setup" element={<GameSetup />} />
       <Route path="/game" element={<Game />} />
+      <Route path="/multigame" element={<MultiGame />} /> {/* Add route for MultiGame */}
     </Routes>
   );
 }

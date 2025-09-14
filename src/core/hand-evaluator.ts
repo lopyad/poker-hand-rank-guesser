@@ -1,4 +1,4 @@
-import { type Card, type EvaluatedHand, HAND_RANK_VALUES, HAND_RANK_NAMES, type Rank, RANKS, type Suit, SUITS } from './types';
+import { type Card, type EvaluatedHand, HAND_RANK_VALUES, HAND_RANK_NAMES, type Rank, RANKS, type Suit, SUITS } from '../types/types';
 
 const RANK_VALUES: { [key in Rank]: number } = { '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 'T': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14 };
 

@@ -1,4 +1,4 @@
-import { type Card, SUITS, RANKS, type Suit } from './types';
+import { type Card, SUITS, RANKS, type Suit } from '../types/types';
 
 // 표준 52장 카드 덱 생성
 export function createDeck(): Card[] {

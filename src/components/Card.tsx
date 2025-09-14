@@ -1,5 +1,5 @@
 import React from 'react';
-import { type Card as CardType, type Suit, SUITS } from '../core/types';
+import { type Card as CardType, type Suit, SUITS } from '../types/types';
 import './Card.css';
 
 interface CardProps {

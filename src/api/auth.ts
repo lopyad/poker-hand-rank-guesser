@@ -1,4 +1,4 @@
-import type { funcResponse } from "../types";
+import type { funcResponse } from "../types/types";
 
 export const sendIdTokenToBackend = async (idToken: string, backendUrl: string): Promise<funcResponse<string>> => {
   try {

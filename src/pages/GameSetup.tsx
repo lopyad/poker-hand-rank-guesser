@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './GameSetup.css';
 import { useGameMode } from '../context/GameModeContext'; // Import the hook
@@ -14,7 +14,11 @@ const GameSetup: React.FC = () => {
   };
 
   const handleContinue = () => {
-    navigate('/game');
+    if (gameMode === 'multiplayer') {
+      navigate('/multigame');
+    } else {
+      navigate('/game');
+    }
   };
 
   return (

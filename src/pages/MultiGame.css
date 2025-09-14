@@ -1,0 +1,57 @@
+.multigame-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.room-code-container {
+  margin: 15px 0;
+  padding: 10px 20px;
+  background-color: #e9e9e9;
+  border-radius: 8px;
+  border: 2px dashed #ccc;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+  justify-content: center; /* Center items horizontally */
+}
+
+.room-code-container p {
+  margin: 0;
+  font-size: 1.2em;
+  color: #555;
+}
+
+.room-code {
+  font-weight: bold;
+  color: #000;
+  letter-spacing: 2px;
+}
+
+.get-room-code-button,
+.join-room-button {
+  padding: 8px 15px;
+  font-size: 0.9em;
+  font-weight: bold;
+  color: white;
+  background-color: #007bff; /* Blue button */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.get-room-code-button:hover,
+.join-room-button:hover {
+  background-color: #0056b3;
+}
+
+.room-code-input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1em;
+  width: 120px; /* Adjust width as needed */
+}
